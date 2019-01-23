@@ -16,9 +16,12 @@
 
 package io.nity.grpc.sample.grpc;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.Channel;
+import io.grpc.Metadata;
 import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.manualflowcontrol.StreamingGreeterGrpc;
+import io.grpc.stub.MetadataUtils;
 import io.nity.grpc.autoconfigure.GrpcClientProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +35,39 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 @Configuration
 @EnableConfigurationProperties(GrpcClientProperties.class)
-public class GrpcStubConfig {
-
+public class WechatGrpcStubConfig {
+    private final GrpcClientProperties clientProperties;
+    private final Metadata metadata = new Metadata();
     @Autowired
-    protected GrpcClientProperties clientProperties;
-
+    public WechatGrpcStubConfig(GrpcClientProperties clientProperties) {
+        this.clientProperties = clientProperties;
+    }
     @Bean
-    public GreeterGrpc.GreeterBlockingStub getGreeterBlockingStub(Channel channel) {
-        GreeterGrpc.GreeterBlockingStub blockingStub = GreeterGrpc.newBlockingStub(channel);
+    public WechatServiceGrpc.WechatServiceFutureStub wechatServiceFutureStub(Channel channel){
+        WechatServiceGrpc.WechatServiceFutureStub FutureStub = WechatServiceGrpc.newFutureStub(channel);
+        FutureStub = MetadataUtils.attachHeaders(FutureStub, metadata);
+
+
+
+
+
+        return FutureStub;
+    }
+    @Bean
+    public WechatServiceGrpc.WechatServiceBlockingStub getWechatServiceBlockingStub(Channel channel) {
+        WechatServiceGrpc.WechatServiceBlockingStub blockingStub = WechatServiceGrpc.newBlockingStub(channel);
+        blockingStub = MetadataUtils.attachHeaders(blockingStub, metadata);
         return blockingStub;
     }
 
-    @Bean
-    public StreamingGreeterGrpc.StreamingGreeterStub getStreamingGreeterStub(Channel channel) {
-        StreamingGreeterGrpc.StreamingGreeterStub streamingGreeterStub = StreamingGreeterGrpc.newStub(channel);
-        return streamingGreeterStub;
-    }
 
+
+
+
+    @Bean
+    public WechatServiceGrpc.WechatServiceStub getStreamingGreeterStub(Channel channel) {
+        WechatServiceGrpc.WechatServiceStub wechatServiceStub = WechatServiceGrpc.newStub(channel);
+        wechatServiceStub = MetadataUtils.attachHeaders(wechatServiceStub, metadata);
+        return wechatServiceStub;
+    }
 }

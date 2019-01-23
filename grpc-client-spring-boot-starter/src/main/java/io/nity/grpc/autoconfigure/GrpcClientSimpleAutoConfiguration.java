@@ -18,6 +18,11 @@ package io.nity.grpc.autoconfigure;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.NettyChannelBuilder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.nity.grpc.DisposableManagedChannel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +30,8 @@ import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.util.StringUtils;
+
+import javax.net.ssl.SSLException;
 
 @Slf4j
 @AutoConfigureOrder
@@ -47,10 +54,17 @@ public class GrpcClientSimpleAutoConfiguration {
 
         log.info("will create channel without tls. recommend only use in internal service");
         log.info("creating channel on {}:{}", host, port);
+        SslContextBuilder builder = GrpcSslContexts.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE);
+        SslContext sslContext = null;
+        try {
+            sslContext = builder.build();
+        } catch (SSLException e) {
+            e.printStackTrace();
+        }
+        channel = NettyChannelBuilder.forAddress(host, port)
+                    .sslContext(sslContext)
+                    .build();
 
-        channel = ManagedChannelBuilder.forAddress(host, port)
-                .usePlaintext()
-                .build();
 
         DisposableManagedChannel disposableManagedChannel = new DisposableManagedChannel(channel);
         return disposableManagedChannel;

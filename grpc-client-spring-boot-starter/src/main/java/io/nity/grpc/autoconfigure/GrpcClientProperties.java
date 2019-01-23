@@ -16,6 +16,7 @@
 
 package io.nity.grpc.autoconfigure;
 
+import io.grpc.Metadata;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -46,6 +47,24 @@ public class GrpcClientProperties {
     public static final String SERVER_MODEL_CUSTOM = "custom";
 
     /**
+     * custom AppId
+     */
+    public static final String DEFAULT_APPID = "";
+    /**
+     * custom AppKey
+     */
+    public static final String DEFAULT_APPKEY = "";
+
+    /**
+     * custom MachineCode
+     */
+    public static final String DEFAULT_MACHINECODE = "";
+
+
+
+
+
+    /**
      * gRPC running model, default simple
      */
     private String model = SERVER_MODEL_SIMPLE;
@@ -68,7 +87,76 @@ public class GrpcClientProperties {
     private String trustCertCollectionFilePath;
     private String clientCertChainFilePath;
     private String clientPrivateKeyFilePath;
+    /**
+     * gRPC stub appid
+     */
+    private String appid = DEFAULT_APPID;
 
+
+
+    /**
+     * gRPC stub appkey
+     */
+    private String appkey = DEFAULT_APPKEY;
+    /**
+     * gRPC stub metadata
+     */
+    private Metadata metadata ;
+
+    /**
+     * gRPC stub machineCode
+     */
+    private String machinecode = DEFAULT_MACHINECODE;
+    public String getMachinecode() {
+        return machinecode;
+    }
+
+    public void setMachinecode(String machinecode) {
+        this.machinecode = machinecode;
+    }
+
+
+    public String getAppId() {
+        return appid;
+    }
+
+    public void setAppId(String appid) {
+        this.appid = appid;
+    }
+
+    public Metadata getMetadata(String appid,String appkey) {
+        this.appid = appid;
+        this.appkey = appkey;
+        return getMetadata();
+    }
+
+
+    public Metadata getMetadata() {
+        if(appid.equals("")  || appkey.equals("")) {
+            return null;
+        } else {
+            metadata = new Metadata();
+            metadata.put(Metadata.Key.of("appid", Metadata.ASCII_STRING_MARSHALLER), appid);
+            metadata.put(Metadata.Key.of("appkey", Metadata.ASCII_STRING_MARSHALLER), appkey);
+            return metadata;
+        }
+    }
+    public void setMetadata(String appid,String appkey) {
+        this.appid = appid;
+        this.appkey = appkey;
+        getMetadata();
+    }
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
+
+    public String getAppKey() {
+        return appkey;
+    }
+
+    public void setAppKey(String appkey) {
+        this.appkey = appkey;
+    }
     public String getHost() {
         return host;
     }

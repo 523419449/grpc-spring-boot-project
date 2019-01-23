@@ -1,0 +1,60 @@
+syntax = "proto3";
+option java_outer_classname = "WechatProto";
+option java_package = "io.nity.grpc.sample.grpc";
+package wechat;
+import "google/api/annotations.proto";
+option java_multiple_files = true;
+service WechatService {
+
+
+
+    rpc helloWechatStreaming (stream WechatMsg) returns (stream WechatMsg) {}
+    rpc helloWechat (WechatMsg) returns (WechatMsg) {
+        option (google.api.http) = {
+          post: "/example/helloWechat"
+          body: "*"
+        };
+    }
+	rpc GetWechatDate (WechatMsg) returns (WechatMsg) {
+       // http option
+        option (google.api.http) = {
+		get: "/example/GetWechatDate"
+        };
+    }
+}
+// 完整的grpc结构体
+message WechatMsg {
+    BaseMsg baseMsg = 1; // 请求消息结构体
+    string token = 2; // 授权TOKEN,CODE,V3_
+    string version = 3; // 协议版本
+    int32 timeStamp = 4; // 消息时间戳
+    string iP = 5; // 外网 IP
+}
+// 请求消息结构体
+message BaseMsg {
+    int32 ret = 1; // 状态码
+    int32 cmd = 2; // 请求接口
+    string cmdUrl = 3; // 接口连接
+    string shortHost = 4; // 短连接地址
+    string longHost = 5; // 长链接地址
+    User user = 6; // 当前微信号结构体
+    bytes longHead = 7; // 长连接包头
+    bytes payloads = 8; // 数据
+    bytes playloadextend = 9; // 扩展数据
+}
+
+// 当前微信号结构体
+message User {
+    int64 uin = 1; // 标识
+    bytes cookies = 2; // 网络跟踪key
+    bytes sessionKey = 3; // 会话密钥
+    string deviceId = 4; // 设备 ID
+    string deviceType = 5; // 设备类型
+    string deviceName = 6; // 设备名字
+    bytes currentsyncKey = 7; // 当前同步 KEY
+    bytes maxSyncKey = 8; // 同步消息 KEY
+    bytes autoAuthKey = 9; // 自动授权 KEY
+    string userame = 10; // 微信 ID
+    bytes nickname = 11; // 微信昵称
+    bytes userExt = 12; // 用户插件
+}

@@ -36,19 +36,15 @@ import java.io.File;
 @Slf4j
 @AutoConfigureOrder
 public class GrpcClientTlsAutoConfiguration {
-
     @Autowired
     private GrpcClientProperties clientProperties;
-
     @Bean
     @ConditionalOnProperty(value = "grpc.client.model", havingValue = GrpcClientProperties.SERVER_MODEL_TLS)
     public DisposableManagedChannel getChannel() throws SSLException {
-        int port = clientProperties.getPort();
         ManagedChannel channel;
-
         String host = clientProperties.getHost();
+        int port = clientProperties.getPort();
         String trustCertCollectionFilePath = clientProperties.getTrustCertCollectionFilePath();
-
         if (!StringUtils.hasText(host)) {
             log.error("please config required property [host] for Tls model");
             throw new RuntimeException("Failed to create Tls channel");
@@ -57,17 +53,13 @@ public class GrpcClientTlsAutoConfiguration {
             log.error("please config required property [trustCertCollectionFilePath] for Tls model");
             throw new RuntimeException("Failed to create Tls channel");
         }
-
         log.info("will create channel with tls");
         log.info("creating channel on {}:{}", host, port);
-
         SslContext sslContext = buildSslContext(trustCertCollectionFilePath, null, null);
-
         channel = NettyChannelBuilder.forAddress(host, port)
                 .negotiationType(NegotiationType.TLS)
                 .sslContext(sslContext)
                 .build();
-
         DisposableManagedChannel disposableManagedChannel = new DisposableManagedChannel(channel);
         return disposableManagedChannel;
     }

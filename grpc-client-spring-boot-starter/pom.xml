@@ -67,6 +67,12 @@
             <artifactId>netty-tcnative-boringssl-static</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-common-protos</artifactId>
+            <version>1.12.0</version>
+        </dependency>
 
     </dependencies>
+
 </project>

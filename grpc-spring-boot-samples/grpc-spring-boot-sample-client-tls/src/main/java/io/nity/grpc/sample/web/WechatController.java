@@ -19,6 +19,9 @@ package io.nity.grpc.sample.web;
 import io.grpc.examples.helloworld.GreeterGrpc;
 import io.grpc.examples.helloworld.HelloReply;
 import io.grpc.examples.helloworld.HelloRequest;
+import io.nity.grpc.sample.grpc.BaseMsg;
+import io.nity.grpc.sample.grpc.WechatMsg;
+import io.nity.grpc.sample.grpc.WechatServiceGrpc;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,25 +29,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-public class GreeterController {
+public class WechatController {
 
     @Autowired
-    private GreeterGrpc.GreeterBlockingStub greeterBlockingStub;
+    private WechatServiceGrpc.WechatServiceBlockingStub wechatServiceGrpc;
 
-    @RequestMapping(value = {"/greet"})
-    public String greet() {
-        HelloReply response;
-
-        String user = "World";
-        HelloRequest request = HelloRequest.newBuilder()
-                .setName(user)
+    @RequestMapping(value = {"/baseMsg"})
+    public String baseMsg() {
+        WechatMsg wechatMsg;
+        BaseMsg baseMsg = BaseMsg.newBuilder().build();
+        WechatMsg reqwechatMsg = WechatMsg.newBuilder()
+                .setBaseMsg(baseMsg)
                 .build();
-
-        log.info("greet sent request ...");
-        response = greeterBlockingStub.sayHello(request);
+        log.info("greet  sent request ...");
+        wechatMsg = wechatServiceGrpc.helloWechat(reqwechatMsg);
         log.info("greet receive response ...");
-
-        return response.getMessage();
+        return  wechatMsg.getBaseMsg().toString();
     }
 
 }
