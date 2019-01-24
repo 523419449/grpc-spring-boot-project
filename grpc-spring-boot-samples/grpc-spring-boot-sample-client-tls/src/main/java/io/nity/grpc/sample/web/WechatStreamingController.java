@@ -69,21 +69,25 @@ public class WechatStreamingController {
                             }
                         });
                     }
+
                     @Override
                     public void onNext(WechatMsg value) {
                         log.info("<-- " + value.getBaseMsg());
                         // Signal the sender to send one message.
                         requestStream.request(1);
                     }
+
                     @Override
                     public void onError(Throwable t) {
                         t.printStackTrace();
                     }
+
                     @Override
                     public void onCompleted() {
                         log.info("All Done");
                     }
                 };
+
         StreamObserver<WechatMsg> helloRequestStreamObserver = wechatServiceStub.helloWechatStreaming(clientResponseObserver);
 
         return "done";

@@ -16,7 +16,6 @@
 
 package io.nity.grpc.sample.grpc;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import io.grpc.Channel;
 import io.grpc.Metadata;
 import io.grpc.examples.helloworld.GreeterGrpc;
@@ -42,28 +41,14 @@ public class WechatGrpcStubConfig {
     public WechatGrpcStubConfig(GrpcClientProperties clientProperties) {
         this.clientProperties = clientProperties;
     }
-    @Bean
-    public WechatServiceGrpc.WechatServiceFutureStub wechatServiceFutureStub(Channel channel){
-        WechatServiceGrpc.WechatServiceFutureStub FutureStub = WechatServiceGrpc.newFutureStub(channel);
-        FutureStub = MetadataUtils.attachHeaders(FutureStub, metadata);
 
-
-
-
-
-        return FutureStub;
-    }
     @Bean
     public WechatServiceGrpc.WechatServiceBlockingStub getWechatServiceBlockingStub(Channel channel) {
         WechatServiceGrpc.WechatServiceBlockingStub blockingStub = WechatServiceGrpc.newBlockingStub(channel);
         blockingStub = MetadataUtils.attachHeaders(blockingStub, metadata);
         return blockingStub;
+
     }
-
-
-
-
-
     @Bean
     public WechatServiceGrpc.WechatServiceStub getStreamingGreeterStub(Channel channel) {
         WechatServiceGrpc.WechatServiceStub wechatServiceStub = WechatServiceGrpc.newStub(channel);

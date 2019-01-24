@@ -25,7 +25,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>grpc-client-spring-boot-starter</artifactId>
+    <artifactId>grpc-client-spring-boot-starter-wechat</artifactId>
     <packaging>jar</packaging>
     <name>gRPC Client Spring Boot Starter</name>
     <description>gRPC Client Spring Boot Starter</description>
